@@ -1,2 +1,1 @@
-# dfw-notification
-DETAIL Framework library for sending notifications
+# DETAIL Framework library for sending notifications
