@@ -6,20 +6,20 @@ class Notifier implements
     NotifierInterface
 {
     /**
-     * @var SenderManager
+     * @var SenderManagerInterface
      */
     protected $senders;
 
     /**
-     * @param SenderManager $senders
+     * @param SenderManagerInterface $senders
      */
-    public function __construct(SenderManager $senders)
+    public function __construct(SenderManagerInterface $senders)
     {
         $this->setSenders($senders);
     }
 
     /**
-     * @return SenderManager
+     * @return SenderManagerInterface
      */
     public function getSenders()
     {
@@ -27,9 +27,9 @@ class Notifier implements
     }
 
     /**
-     * @param SenderManager $senders
+     * @param SenderManagerInterface $senders
      */
-    public function setSenders(SenderManager $senders)
+    public function setSenders(SenderManagerInterface $senders)
     {
         $this->senders = $senders;
     }
@@ -53,13 +53,13 @@ class Notifier implements
     {
         $senders = $this->getSenders();
 
-        if (!$senders->has($notification->getType())) {
+        if (!$senders->hasSender($notification->getType())) {
             throw new Exception\RuntimeException(
                 sprintf('No sender registered for notification type "%s"', $notification->getType())
             );
         }
 
-        $sender = $senders->get($notification->getType());
+        $sender = $senders->getSender($notification->getType());
         $call = $sender->send($notification->getPayload(), $notification->getParams());
 
         return $call;

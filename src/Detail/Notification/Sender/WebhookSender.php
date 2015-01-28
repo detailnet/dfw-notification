@@ -13,6 +13,9 @@ class WebhookSender extends BaseSender
     const PARAM_URL    = 'url';
     const PARAM_METHOD = 'method';
 
+    /**
+     * @var array
+     */
     protected $requiredParams = array(
         self::PARAM_URL,
     );
@@ -65,7 +68,7 @@ class WebhookSender extends BaseSender
         $error = null;
 
         try {
-            $httpResponse = $httpClient->post(
+            $httpClient->post(
                 $url,
                 array(
                     'body' => $this->encodePayload($payload),
