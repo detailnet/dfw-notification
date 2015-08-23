@@ -18,6 +18,7 @@ class WebhookSender extends BaseSender
      */
     protected $requiredParams = array(
         self::PARAM_URL,
+        self::PARAM_METHOD
     );
 
     /**
@@ -58,25 +59,37 @@ class WebhookSender extends BaseSender
     {
         $params = $this->validateParams($params);
 
-        $getParam = function($key, $default = null) use ($params) {
+        $getParam = function ($key, $default = null) use ($params) {
             return array_key_exists($key, $params) ? $params[$key] : $default;
         };
 
         /** @todo Validate URL? */
         $url = $getParam(self::PARAM_URL);
+        $http_method = $getParam(self::PARAM_METHOD);
         $httpClient = $this->getHttpClient();
         $error = null;
 
         try {
-            $httpClient->post(
-                $url,
-                array(
-                    'body' => $this->encodePayload($payload),
-                    'headers' => array(
-                        'Content-Type' => 'application/json',
-                    ),
-                )
-            );
+            if (empty($payload)) {
+                // assume that were not sending FORM data.
+                // use HTTP method defined in required parameter
+                // 'method'
+                // $http_method maps to the configured method type
+                // retreived from required params
+                $httpClient->$http_method($url);
+            } else {
+                // if there is a payload to be sent,
+                // choose HTTP POST command to send FORM data as JSON type
+                $httpClient->post(
+                    $url,
+                    array(
+                        'body' => $this->encodePayload($payload),
+                        'headers' => array(
+                            'Content-Type' => 'application/json',
+                        ),
+                    )
+                );
+            }
 
         } catch (HttpException $e) {
             $error = $e;
