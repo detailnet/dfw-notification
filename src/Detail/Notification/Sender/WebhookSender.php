@@ -119,7 +119,7 @@ class WebhookSender extends BaseSender
                     break;
             }
 
-            throw new Exception\RuntimeException(
+            throw new Exception\PayloadEncodingException(
                 'Failed to encode payload to JSON; ' . $message
             );
         }

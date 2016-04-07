@@ -54,7 +54,7 @@ class Notifier implements
         $senders = $this->getSenders();
 
         if (!$senders->hasSender($notification->getType())) {
-            throw new Exception\RuntimeException(
+            throw new Exception\NotificationTypeException(
                 sprintf('No sender registered for notification type "%s"', $notification->getType())
             );
         }
