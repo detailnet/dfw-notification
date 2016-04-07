@@ -4,7 +4,7 @@ namespace Detail\Notification\Sender;
 
 use Http\Client\HttpClient as HttpClient;
 use Http\Client\Exception\HttpException as HttpException;
-use Http\Discovery\HttpClientDiscovery;
+use Http\Discovery\MessageFactoryDiscovery;
 
 use Detail\Notification\Call;
 use Detail\Notification\Exception;
@@ -53,9 +53,10 @@ class WebhookSender extends BaseSender
     /**
      * @param array $payload
      * @param array $params
+     * @param \Psr\Http\Message\RequestInterface $request
      * @return Call
      */
-    public function send(array $payload, array $params = array())
+    public function send(array $payload, array $params = array(), $request = null)
     {
         $params = $this->validateParams($params);
 
@@ -67,17 +68,22 @@ class WebhookSender extends BaseSender
         $url = $getParam(self::PARAM_URL);
         $httpClient = $this->getHttpClient();
         $error = null;
-
+        
+        if ($request === null) {
+            $messageFactory = MessageFactoryDiscovery::find();
+            $request = $messageFactory->createRequest('POST', $url, ['Content-Type' => 'application/json'], $this->encodePayload($payload));
+        } else {
+            /*
+             * Dirty hack
+             */
+            $request->withHeader('Content-Type', 'application/json');
+            $request->withBody(\GuzzleHttp\Psr7\stream_for($this->encodePayload($payload)));
+            $request->withMethod('POST');
+            $request->withUri(new \GuzzleHttp\Psr7\Uri($url));
+        }
+        
         try {
-            $httpClient->post(
-                $url,
-                array(
-                    'body' => $this->encodePayload($payload),
-                    'headers' => array(
-                        'Content-Type' => 'application/json',
-                    ),
-                )
-            );
+            $httpClient->sendRequest($request);
 
         } catch (HttpException $e) {
             $error = $e;

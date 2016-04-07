@@ -31,5 +31,18 @@ class WebhookSenderTest extends TestCase
         $sender = $this->sender;
         $this->assertInstanceOf('Http\Client\HttpClient', $sender->getHttpClient());
     }
+    
+    public function testSend()
+    {
+        $sender = $this->sender;
+        $params = array('url' => 'http://example.com');
+        $payload = array('testload' => 1);
+        /*
+         * dirty hack because I could not get discovery to work
+         */
+        $request = new \GuzzleHttp\Psr7\Request('POST', $params['url']);
+        $call = $sender->send($payload, $params, $request);
+        $this->assertInstanceOf('Detail\Notification\Call', $call);
+    }
 
 }
