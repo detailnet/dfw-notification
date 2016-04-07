@@ -57,7 +57,7 @@ class WebhookSender extends BaseSender
      * @param RequestInterface $request
      * @return Call
      */
-    public function send(array $payload, array $params = array(), $request = null)
+    public function send(array $payload, array $params = array())
     {
         $params = $this->validateParams($params);
 
