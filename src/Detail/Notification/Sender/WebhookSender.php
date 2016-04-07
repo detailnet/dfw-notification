@@ -2,12 +2,13 @@
 
 namespace Detail\Notification\Sender;
 
-use Http\Client\HttpClient as HttpClient;
-use Http\Client\Exception\HttpException as HttpException;
-use Http\Discovery\MessageFactoryDiscovery;
-
 use Detail\Notification\Call;
 use Detail\Notification\Exception;
+use Http\Client\Common\HttpMethodsClient;
+use Http\Client\Exception\HttpException as HttpException;
+use Http\Client\HttpClient as HttpClient;
+use Http\Message\MessageFactory\GuzzleMessageFactory;
+use Psr\Http\Message\RequestInterface;
 
 class WebhookSender extends BaseSender
 {
@@ -53,7 +54,7 @@ class WebhookSender extends BaseSender
     /**
      * @param array $payload
      * @param array $params
-     * @param \Psr\Http\Message\RequestInterface $request
+     * @param RequestInterface $request
      * @return Call
      */
     public function send(array $payload, array $params = array(), $request = null)
@@ -69,22 +70,11 @@ class WebhookSender extends BaseSender
         $httpClient = $this->getHttpClient();
         $error = null;
         
-        if ($request === null) {
-            $messageFactory = MessageFactoryDiscovery::find();
-            $request = $messageFactory->createRequest('POST', $url, ['Content-Type' => 'application/json'], $this->encodePayload($payload));
-        } else {
-            /*
-             * Dirty hack
-             */
-            $request->withHeader('Content-Type', 'application/json');
-            $request->withBody(\GuzzleHttp\Psr7\stream_for($this->encodePayload($payload)));
-            $request->withMethod('POST');
-            $request->withUri(new \GuzzleHttp\Psr7\Uri($url));
-        }
+        /* TODO: Get rid of the Guzzle Dependency here. This would require a working discovery mechanism */
+        $client = new HttpMethodsClient($httpClient, new GuzzleMessageFactory());
         
         try {
-            $httpClient->sendRequest($request);
-
+            $client->post($url, ['Content-Type' => 'application/json'], $this->encodePayload($payload));
         } catch (HttpException $e) {
             $error = $e;
         }
