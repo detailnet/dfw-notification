@@ -2,8 +2,9 @@
 
 namespace Detail\Notification\Sender;
 
-use GuzzleHttp\Client as HttpClient;
-use GuzzleHttp\Exception\BadResponseException as HttpException;
+use Http\Client\HttpClient as HttpClient;
+use Http\Client\Exception\HttpException as HttpException;
+use Http\Discovery\HttpClientDiscovery;
 
 use Detail\Notification\Call;
 use Detail\Notification\Exception;
