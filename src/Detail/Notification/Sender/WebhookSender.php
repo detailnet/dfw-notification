@@ -2,11 +2,13 @@
 
 namespace Detail\Notification\Sender;
 
-use GuzzleHttp\Client as HttpClient;
-use GuzzleHttp\Exception\BadResponseException as HttpException;
-
 use Detail\Notification\Call;
 use Detail\Notification\Exception;
+use Http\Client\Common\HttpMethodsClient;
+use Http\Client\Exception\HttpException as HttpException;
+use Http\Client\HttpClient as HttpClient;
+use Http\Message\MessageFactory\GuzzleMessageFactory;
+use Psr\Http\Message\RequestInterface;
 
 class WebhookSender extends BaseSender
 {
@@ -66,18 +68,12 @@ class WebhookSender extends BaseSender
         $url = $getParam(self::PARAM_URL);
         $httpClient = $this->getHttpClient();
         $error = null;
-
+        
+        /* TODO: Get rid of the Guzzle Dependency here. This would require a working discovery mechanism */
+        $client = new HttpMethodsClient($httpClient, new GuzzleMessageFactory());
+        
         try {
-            $httpClient->post(
-                $url,
-                array(
-                    'body' => $this->encodePayload($payload),
-                    'headers' => array(
-                        'Content-Type' => 'application/json',
-                    ),
-                )
-            );
-
+            $client->post($url, ['Content-Type' => 'application/json'], $this->encodePayload($payload));
         } catch (HttpException $e) {
             $error = $e;
         }
