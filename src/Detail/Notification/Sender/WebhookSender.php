@@ -54,7 +54,6 @@ class WebhookSender extends BaseSender
     /**
      * @param array $payload
      * @param array $params
-     * @param RequestInterface $request
      * @return Call
      */
     public function send(array $payload, array $params = array())
