@@ -10,8 +10,7 @@ use Detail\Notification\Exception;
 
 class WebhookSender extends BaseSender
 {
-    const PARAM_URL    = 'url';
-    const PARAM_METHOD = 'method';
+    const PARAM_URL = 'url';
 
     /**
      * @var array
