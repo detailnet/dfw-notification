@@ -57,7 +57,7 @@ class WebhookSender extends BaseSender
     {
         $params = $this->validateParams($params);
 
-        $getParam = function($key, $default = null) use ($params) {
+        $getParam = function ($key, $default = null) use ($params) {
             return array_key_exists($key, $params) ? $params[$key] : $default;
         };
 
@@ -76,7 +76,6 @@ class WebhookSender extends BaseSender
                     ),
                 )
             );
-
         } catch (HttpException $e) {
             $error = $e;
         }
