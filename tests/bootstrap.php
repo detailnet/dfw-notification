@@ -11,6 +11,7 @@ if (file_exists($basePath . 'vendor/autoload.php')) {
     );
 }
 
+$loader->add('DetailTest\Mock', __DIR__);
 $loader->add('DetailTest\Notification', __DIR__);
 
 if (!$config = @include $basePath . 'tests/configuration.php') {
