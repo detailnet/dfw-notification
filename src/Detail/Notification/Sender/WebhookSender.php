@@ -20,6 +20,20 @@ class WebhookSender extends BaseSender
     );
 
     /**
+     * @var array
+     */
+    protected $defaultParams = array(
+        self::PARAM_METHOD => 'POST'
+    );
+
+    /**
+     * @var array
+     */
+    protected $allowedMethods = array(
+        'post'
+    );
+
+    /**
      * @var HttpClient
      */
     protected $httpClient;
@@ -61,13 +75,14 @@ class WebhookSender extends BaseSender
             return array_key_exists($key, $params) ? $params[$key] : $default;
         };
 
-        /** @todo Validate URL? */
-        $url = $getParam(self::PARAM_URL);
         $httpClient = $this->getHttpClient();
         $error = null;
 
         try {
-            $httpClient->post(
+            $url = $this->verifyUrl($getParam(self::PARAM_URL));
+            $method = $this->verifyMethod($getParam(self::PARAM_METHOD, 'post'));
+
+            $httpClient->$method(
                 $url,
                 array(
                     'body' => $this->encodePayload($payload),
@@ -78,11 +93,44 @@ class WebhookSender extends BaseSender
             );
         } catch (HttpException $e) {
             $error = $e;
+
+
+        } catch (Exception\InvalidArgumentException $e) {
+            $error = $e;
         }
 
         $call = new Call($error);
 
         return $call;
+    }
+
+    /**
+     * @param string $url
+     * @return string
+     * @throws Exception\InvalidArgumentException
+     */
+    protected function verifyUrl($url)
+    {
+        if (filter_var($url, FILTER_VALIDATE_URL) === false) {
+            $message = 'Url not allowed or wrong: ' . $url;
+            throw new Exception\InvalidArgumentException($message);
+        }
+        return $url;
+    }
+
+    /**
+     * @param string $method
+     * @return string
+     * @throws Exception\InvalidArgumentException
+     */
+    protected function verifyMethod($method)
+    {
+        $method = strtolower($method);
+        if (!in_array($method, $this->allowedMethods)) {
+            $message = 'Sender method not allowed, please use: ' . implode(', ', $this->allowedMethods);
+            throw new Exception\InvalidArgumentException($message);
+        }
+        return $method;
     }
 
     /**
