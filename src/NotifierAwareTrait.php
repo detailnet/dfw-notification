@@ -1,18 +1,16 @@
 <?php
 
-namespace Detail\Notification\Service;
-
-use Detail\Notification\NotifierInterface;
+namespace Detail\Notification;
 
 trait NotifierAwareTrait
 {
     /**
-     * @var NotifierInterface
+     * @var NotifierInterface|null
      */
     protected $notifier;
 
     /**
-     * @return NotifierInterface
+     * @return NotifierInterface|null
      */
     public function getNotifier()
     {

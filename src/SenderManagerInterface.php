@@ -15,5 +15,5 @@ interface SenderManagerInterface
      * @param array $options
      * @return Sender\SenderInterface
      */
-    public function getSender($type, $options = array());
+    public function getSender($type, $options = []);
 }

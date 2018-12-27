@@ -25,7 +25,7 @@ class Notification implements
      * @param array $payload
      * @param array $params
      */
-    public function __construct($type, array $payload, array $params = array())
+    public function __construct($type, array $payload, array $params = [])
     {
         $this->type = $type;
         $this->payload = $payload;

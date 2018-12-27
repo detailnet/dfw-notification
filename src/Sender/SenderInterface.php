@@ -11,5 +11,5 @@ interface SenderInterface
      * @param array $params
      * @return CallInterface
      */
-    public function send(array $payload, array $params = array());
+    public function send(array $payload, array $params = []);
 }
