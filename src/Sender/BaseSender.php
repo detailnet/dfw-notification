@@ -10,12 +10,12 @@ abstract class BaseSender implements
     /**
      * @var array
      */
-    protected $requiredParams = array();
+    protected $requiredParams = [];
 
     /**
      * @var array
      */
-    protected $defaultParams = array();
+    protected $defaultParams = [];
 
     /**
      * @return array
@@ -37,13 +37,13 @@ abstract class BaseSender implements
      * @param array $params
      * @return array
      */
-    protected function validateParams(array $params = array())
+    protected function validateParams(array $params = [])
     {
         $requiredParams = $this->getRequiredParams();
 
         foreach ($requiredParams as $requiredParam) {
             if (!array_key_exists($requiredParam, $params)) {
-                throw new Exception\InvalidArgumentException(
+                throw new Exception\RuntimeException(
                     sprintf('Missing required param "%s"', $requiredParam)
                 );
             }

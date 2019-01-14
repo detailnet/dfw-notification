@@ -3,7 +3,7 @@
 namespace Detail\Notification\Sender;
 
 use GuzzleHttp\Client as HttpClient;
-use GuzzleHttp\Exception\BadResponseException as HttpException;
+use GuzzleHttp\Exception\TransferException as HttpException;
 
 use Detail\Notification\Call;
 use Detail\Notification\Exception;
@@ -15,9 +15,9 @@ class WebhookSender extends BaseSender
     /**
      * @var array
      */
-    protected $requiredParams = array(
+    protected $requiredParams = [
         self::PARAM_URL,
-    );
+    ];
 
     /**
      * @var HttpClient
@@ -53,7 +53,7 @@ class WebhookSender extends BaseSender
      * @param array $params
      * @return Call
      */
-    public function send(array $payload, array $params = array())
+    public function send(array $payload, array $params = [])
     {
         $params = $this->validateParams($params);
 
@@ -69,12 +69,12 @@ class WebhookSender extends BaseSender
         try {
             $httpClient->post(
                 $url,
-                array(
+                [
                     'body' => $this->encodePayload($payload),
-                    'headers' => array(
+                    'headers' => [
                         'Content-Type' => 'application/json',
-                    ),
-                )
+                    ],
+                ]
             );
         } catch (HttpException $e) {
             $error = $e;

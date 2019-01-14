@@ -40,7 +40,7 @@ class Notifier implements
      * @param array $params
      * @return Notification
      */
-    public function createNotification($type, array $payload, array $params = array())
+    public function createNotification($type, array $payload, array $params = [])
     {
         return new Notification($type, $payload, $params);
     }

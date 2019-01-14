@@ -10,7 +10,7 @@ interface NotifierInterface
      * @param array $params
      * @return NotificationInterface
      */
-    public function createNotification($type, array $payload, array $params = array());
+    public function createNotification($type, array $payload, array $params = []);
 
     /**
      * @param NotificationInterface $notification

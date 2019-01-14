@@ -2,9 +2,6 @@
 
 namespace Detail\Notification;
 
-use DateTime;
-use Exception;
-
 interface CallInterface
 {
     /**
@@ -18,7 +15,7 @@ interface CallInterface
     public function isError();
 
     /**
-     * @return string|Exception|null
+     * @return string|\Exception|null
      */
     public function getError();
 
@@ -28,7 +25,7 @@ interface CallInterface
     public function getErrorMessage();
 
     /**
-     * @return DateTime
+     * @return \DateTime
      */
     public function getSentOn();
 }
